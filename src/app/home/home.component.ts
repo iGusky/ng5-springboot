@@ -37,20 +37,39 @@ export class HomeComponent implements OnInit {
   goalText: string = 'My first life goal';
   goals = [];
 
-
-
   constructor(private _data: DataService) { }
 
   ngOnInit(): void {
     this.itemCount = this.goals.length;
     this._data.goal.subscribe(res => this.goals=res);
     this._data.changeGoal(this.goals);
+
+    this._data.getGoals()
+     .subscribe((data: any) => {
+      alert(JSON.stringify(data.content));
+
+      this.goals = data.content;
+      this._data.changeGoal(this.goals);
+
+    });
   }
   addItem(){
-    this.goals.push(this.goalText);
-    this.goalText = "";
-    this.itemCount = this.goals.length;
-    this._data.changeGoal(this.goals);
+    var payload = {
+      title : this.goalText,
+      description : this.goalText
+    }
+    // this.goals.push(this.goalText);
+    // this.goalText = "";
+    // this.itemCount = this.goals.length;
+    // this._data.changeGoal(this.goals);
+    this._data.newGoal(payload).subscribe((data: any) => {
+   
+      this.goals.push(payload);
+      this.goalText='';
+      this.itemCount=this.goals.length;
+      this._data.changeGoal(this.goals);
+
+   });
   }
 
   removeItem(i){
